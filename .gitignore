@@ -1,0 +1,8 @@
+# nic poufnego nie ma prawa trafić do repo
+velo16_secrets.json
+*.py
+*.xlsx
+*.txt
+*_sent_history.json
+velo16_dashboard_data.json
+monitoring/
