@@ -20,6 +20,34 @@ Nowy folder z logami wysyłki jest wykrywany automatycznie i dostaje własną za
 Dla każdej kampanii: liczby zbiorcze, wykres dzień po dniu, wykres narastający,
 podział całej bazy i przeszukiwalne listy adresów z pobieraniem do CSV.
 
+## Faktury, kwoty i prowizja
+
+Zakładka **Faktury i kwoty** zbiera każdą kwotę wykrytą w skrzynce — z treści
+maila albo z załącznika.
+
+* **Prowizja 0,5% stoi przy każdej kategorii.** Ma ją każda kampania w tabeli
+  „Podział na kampanie" (także ta, w której nie było jeszcze żadnej faktury —
+  wtedy `0,00`), każda zakładka kampanii w swoich kafelkach, wiersz `Razem`,
+  każdy produkt w tabeli „Co się sprzedało" i każda kolumna w CSV.
+* **Osobno dla każdej waluty.** PLN i EUR mają własne kafelki, własne wiersze
+  w tabeli i własny wykres — mieszanie ich na jednej osi dawało słupki, których
+  nie da się porównać.
+* **Do sumy i prowizji wchodzą tylko pewne odczyty**, czyli kwoty stojące przy
+  etykiecie w rodzaju „razem do zapłaty". Zgadnięte są na liście, ale poza sumą.
+
+### Skąd brane są liczby z faktury
+
+| Źródło | Co się z niego czyta |
+|---|---|
+| **XML KSeF (FA 1/2/3)** | numer, data, waluta, suma `P_15` i pozycje `FaWiersz` — wprost z dokumentu, bez zgadywania |
+| **XML UBL / PEPPOL** | `PayableAmount`, numer, data i pozycje faktury |
+| **PDF** | tekst **i tabele** (pdfplumber) — wiersz tabeli trafia do odczytu jako jedna linia |
+| **HTML** | tabela zamieniana na wiersze i kolumny, encje (`&nbsp;`, `&#347;`) rozkodowane |
+| **XLSX / DOCX / CSV** | tekst z zachowaniem podziału na kolumny |
+
+Pliki, które sami wysyłamy w kampanii (listy kontaktów, oferty, cenniki), są
+pomijane przy liczeniu kwot — to nie są dokumenty sprzedaży.
+
 ## Statusy
 
 | Status | Znaczenie |
