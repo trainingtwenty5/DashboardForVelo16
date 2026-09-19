@@ -20,6 +20,25 @@ Nowy folder z logami wysyłki jest wykrywany automatycznie i dostaje własną za
 Dla każdej kampanii: liczby zbiorcze, wykres dzień po dniu, wykres narastający,
 podział całej bazy i przeszukiwalne listy adresów z pobieraniem do CSV.
 
+## Sprzedaż liczona wątkami
+
+Jedna sprzedaż to **cały wątek**: oferta → odpowiedź → zamówienie → faktura.
+Wchodzi do sumy **raz**. Wątek sklejany jest po trzech śladach:
+
+1. nagłówki `References` / `In-Reply-To` — to jest pewne,
+2. ten sam temat (bez `RE:`) od tego samego kontrahenta,
+3. ta sama kwota od tego samego kontrahenta w ciągu 45 dni — tak łączy się
+   zamówienie z fakturą, która go nie cytuje.
+
+O kwocie decyduje najmocniejszy dokument w wątku: **faktura > zamówienie >
+kwota z treści maila**. Gdy faktura jest skanem bez pozycji, kwota zostaje
+z faktury, a lista pozycji („co sprzedaliśmy") z zamówienia w tym samym wątku.
+
+Zakładka **Faktury i kwoty** pokazuje kolejno: kafelki sprzedaży, podział na
+kampanie, tabelę transakcji wątek po wątku, listę sprzedanego towaru,
+wykresy per waluta i na końcu **wszystkie maile z kwotą** jako materiał
+źródłowy — tam jeden wątek może mieć kilka wierszy.
+
 ## Faktury, kwoty i prowizja
 
 Zakładka **Faktury i kwoty** zbiera każdą kwotę wykrytą w skrzynce — z treści
@@ -78,9 +97,14 @@ dzienny limit Gmaila 550, żądanie logowania 534, serwer zajęty 421) i ile
 z tych adresów można ponowić od ręki.
 
 Mailer dopisuje adres do `*_sent_history.json` dopiero **po udanej wysyłce**,
-więc adres z samym błędem nie jest zablokowany — wróci do kolejki sam.
-Sprawdzić to można skryptem `velo16_ponow_bledy.py` (podgląd; `--zrob`
-usuwa z historii i zostawia kopię pliku).
+więc adres z samym błędem nie jest zablokowany — wróci do kolejki sam. Dlatego
+status nazywa się **„Do ponowienia"**, a kafelek **„w kolejce razem"** liczy
+adresy bez próby plus te do ponowienia.
+
+Sprawdzić to można skryptem `velo16_ponow_bledy.py`: pokazuje, ile adresów
+nie doszło, ile z nich siedzi w historii (powinno być 0) i czy wszystkie są
+nadal na liście kontaktów, z której czyta mailer. Z `--zrob` usuwa z historii
+i zostawia kopię pliku.
 
 ## Skąd biorą się dane
 
