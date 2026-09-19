@@ -46,7 +46,20 @@ maila albo z załącznika.
 | **XLSX / DOCX / CSV** | tekst z zachowaniem podziału na kolumny |
 
 Pliki, które sami wysyłamy w kampanii (listy kontaktów, oferty, cenniki), są
-pomijane przy liczeniu kwot — to nie są dokumenty sprzedaży.
+pomijane przy liczeniu kwot — **chyba że wrócą jako zamówienie**.
+
+### Zamówienia w arkuszu
+
+Kontrahent zwykle odsyła nasz własny plik oferty z dopisaną kolumną
+`zamówienie`. Skrypt szuka w arkuszu nagłówka z kolumną nazwy, ilości
+zamawianej i ceny, po czym liczy **ilość × cena** po wszystkich wierszach.
+Wartością dokumentu jest suma zamówienia, a nie pierwsza kwota znaleziona
+w mailu — wcześniej oferta „15 zł brutto/para" cytowana w odpowiedzi dawała
+zamówienie na 15 zł.
+
+Zabezpieczenia: komórki w rodzaju `10+` (stan magazynowy) nie są ilością,
+a w **naszym** pliku kolumna musi wprost mówić o zamówieniu — samo „ilość"
+w cenniku to stan, nie zamówienie.
 
 ## Statusy
 
@@ -56,6 +69,18 @@ pomijane przy liczeniu kwot — to nie są dokumenty sprzedaży.
 | **Odbity (nieaktualny)** | skrzynka odbiorcy odrzuciła wiadomość — najczęściej adres już nie istnieje |
 | **Błąd SMTP** | nasz serwer nie przyjął wysyłki (np. kod 534 — Gmail odrzucił hasło aplikacji); **mail w ogóle nie wyszedł**, warto wysłać ponownie |
 | **W kolejce** | adres jest na liście kontaktów, ale jeszcze nie było próby wysyłki |
+
+## Błąd SMTP — co dalej
+
+Kafelek **Błąd SMTP** liczy adresy, do których mail nie wyszedł w ogóle.
+Baner pod nagłówkiem pokazuje, **z jakiego powodu** (zerwane połączenie,
+dzienny limit Gmaila 550, żądanie logowania 534, serwer zajęty 421) i ile
+z tych adresów można ponowić od ręki.
+
+Mailer dopisuje adres do `*_sent_history.json` dopiero **po udanej wysyłce**,
+więc adres z samym błędem nie jest zablokowany — wróci do kolejki sam.
+Sprawdzić to można skryptem `velo16_ponow_bledy.py` (podgląd; `--zrob`
+usuwa z historii i zostawia kopię pliku).
 
 ## Skąd biorą się dane
 
