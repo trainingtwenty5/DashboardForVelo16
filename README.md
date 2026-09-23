@@ -62,7 +62,15 @@ maila albo z załącznika.
 | **XML UBL / PEPPOL** | `PayableAmount`, numer, data i pozycje faktury |
 | **PDF** | tekst **i tabele** (pdfplumber) — wiersz tabeli trafia do odczytu jako jedna linia |
 | **HTML** | tabela zamieniana na wiersze i kolumny, encje (`&nbsp;`, `&#347;`) rozkodowane |
-| **XLSX / DOCX / CSV** | tekst z zachowaniem podziału na kolumny |
+| **XLSX / DOCX / CSV** | tekst z zachowaniem podziału na kolumny; tabela pozycji czytana kolumnami |
+
+Kwota nie musi mieć przy sobie waluty. Na fakturze z arkusza waluta stoi
+w nagłówku albo przy sumie (`Total CHF exkl. MwSt`) — wtedy brana jest stamtąd,
+a w ostateczności z całego dokumentu. Etykiety sum rozpoznawane są też po
+niemiecku, angielsku i francusku (`Rechnungsbetrag`, `Amount due`,
+`Montant total`), a nagłówki tabeli pozycji po `ArtBez`, `Menge`, `Preis`,
+`Wert`. Gdy nagłówek kolumny z nazwą jest nieznanym skrótem, brana jest ta
+kolumna, w której jest najwięcej zwykłego tekstu.
 
 Pliki, które sami wysyłamy w kampanii (listy kontaktów, oferty, cenniki), są
 pomijane przy liczeniu kwot — **chyba że wrócą jako zamówienie**.
@@ -88,6 +96,28 @@ w cenniku to stan, nie zamówienie.
 | **Odbity (nieaktualny)** | skrzynka odbiorcy odrzuciła wiadomość — najczęściej adres już nie istnieje |
 | **Błąd SMTP** | nasz serwer nie przyjął wysyłki (np. kod 534 — Gmail odrzucił hasło aplikacji); **mail w ogóle nie wyszedł**, warto wysłać ponownie |
 | **W kolejce** | adres jest na liście kontaktów, ale jeszcze nie było próby wysyłki |
+
+## Odpowiedzi — ile procent odpisało
+
+Każda zakładka kampanii ma sekcję **Odpowiedzi**: kafelek z odsetkiem, wykres
+dzień po dniu oraz dwie tabele — **miesiącami** i **dzień po dniu** — z liczbą
+wysłanych, dostarczonych, odpowiedzi i odsetkiem, plus wiersz `Razem`.
+
+Odsetek liczony jest na dniu **wysyłki**: z maili, które poszły danego dnia,
+tyle procent czymś odpisało. Mianownikiem są **dostarczone**, bo z odbitego
+adresu nikt nie odpowie.
+
+## Kolejka — co jeszcze pójdzie
+
+Adres, do którego mail nie wyszedł (zerwane połączenie, limit Gmaila), **nie
+jest osobnym statusem** — siedzi w kolejce razem z adresami, które nie miały
+jeszcze żadnej próby. Tak samo widzi to mailer: dopisuje adres do historii
+dopiero po udanej wysyłce, więc przy najbliższym cyklu weźmie go ponownie.
+
+* kafelek **jeszcze bez próby** — cała kolejka
+* kafelek **w tym po nieudanej próbie** — ile z niej to drugie podejście
+* filtr **Po nieudanej próbie** nad listą adresów, a w kolumnie „szczegóły"
+  powód, przez który mail nie wyszedł
 
 ## Błąd SMTP — co dalej
 
