@@ -143,6 +143,36 @@ i zostawia kopię pliku.
 * `*.xlsx` — listy kontaktów (kto jeszcze czeka w kolejce)
 * IMAP skrzynek Velo16 — odbicia (z adresem, który odbił) i odpowiedzi
 
+## Dostęp — hasło
+
+Strona w tym repozytorium jest **zaszyfrowana**. Plik `index.html` zawiera
+wyłącznie szyfrogram i ekran na hasło; bez hasła nie da się z niego odczytać
+ani adresu, ani kwoty, ani nazwy firmy — również przez „pokaż źródło" czy
+pobranie pliku z repo.
+
+* szyfr: **AES-256-GCM**, klucz z hasła przez **PBKDF2-HMAC-SHA256, 600 000
+  iteracji** (zalecenie OWASP), losowa sól i IV przy każdym przebiegu
+* odszyfrowanie robi przeglądarka (Web Crypto), po podaniu hasła strona
+  podmienia się na pełny dashboard
+* hasło pamiętane jest na czas otwartej karty — odświeżenie nie pyta ponownie,
+  zamknięcie karty czyści
+
+**Hasło nigdy nie trafia do repozytorium.** Leży w pliku
+`Velo_emieler/dashboard_haslo.txt` na komputerze, poza folderem repo i w
+`.gitignore`. Skrypt szuka go po kolei w:
+
+1. `monitoring/velo16_secrets.json` → `{"dashboard_password": "..."}`
+2. zmiennej środowiskowej `VELO16_DASHBOARD_PASSWORD`
+3. pliku `dashboard_haslo.txt`
+
+Zmiana hasła to nadpisanie tego pliku i kolejny przebieg. Gdy hasła nie ma,
+strona publikuje się tak jak wcześniej — bez szyfrowania.
+
+Czego to **nie** załatwia: sam fakt istnienia strony i to, że coś na niej jest,
+pozostaje publiczne. Siłą zabezpieczenia jest siła hasła — kto pobierze plik,
+może próbować je łamać offline, więc hasło ma być długie i nieużywane nigdzie
+indziej. Prywatny adres strony wymagałby GitHub Enterprise Cloud.
+
 ## Prywatność
 
 W tym repozytorium adresy e-mail są **zamaskowane** (`k*****t@firma.pl`).
